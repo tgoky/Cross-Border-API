@@ -1,11 +1,24 @@
 import { useState } from 'react';
-import { Box, Button, Text, Flex, TextInput } from '@mantine/core';
+import { Box, Button, Text, Flex, TextInput, Radio, Popover } from '@mantine/core';
+import { DatePicker } from '@mantine/dates'; // Import DatePicker
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css'; // Import default styles for phone input
 
 export default function StepperForm() {
   const [step, setStep] = useState(1); // Track the current step
   const [phoneNumber, setPhoneNumber] = useState(''); // Track the phone number input
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    dateOfBirth: new Date(),
+    sex: '',
+    occupation: '',
+    address: '',
+    state: '',
+    email: '',
+  });
+
+  const [popoverOpened, setPopoverOpened] = useState(false); // Popover state for DatePicker
 
   // Function to go to the next step
   const nextStep = () => {
@@ -17,13 +30,18 @@ export default function StepperForm() {
     if (step > 1) setStep(step - 1);
   };
 
+  // Typing handleInputChange function to handle both string and Date types
+  const handleInputChange = (field: keyof typeof formData, value: string | Date) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
   return (
     <div style={{ backgroundColor: 'rgba(103, 66, 66, 0.8)', minHeight: '100vh' }}>
-      <Flex justify="center" align="center" style={{ height: '50vh' }}>
+      <Flex justify="center" align="center" style={{ height: '80vh' }}>
         <Box
           style={{
             padding: '40px',
-            width: '400px',
+            width: '450px', // Increased width for consistency
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
             borderRadius: '12px',
             textAlign: 'center',
@@ -49,7 +67,7 @@ export default function StepperForm() {
                 inputStyle={{
                   width: '100%',
                   borderRadius: '8px',
-                 paddingRight: '20px',
+                  paddingRight: '20px',
                   padding: '12px',
                   backgroundColor: 'white',
                 }}
@@ -78,16 +96,94 @@ export default function StepperForm() {
               <Text size="lg" mb="md" style={{ color: 'white' }}>
                 Sign Up Form
               </Text>
-              {/* Sign Up form content */}
+
+              {/* First Name */}
               <TextInput
-                placeholder="Enter your email"
-                style={{
-                  width: '100%',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  backgroundColor: 'white',
-                }}
+                placeholder="First Name"
+                value={formData.firstName}
+                onChange={(event) => handleInputChange('firstName', event.currentTarget.value)}
+                style={{ marginBottom: '12px' }}
               />
+
+              {/* Last Name */}
+              <TextInput
+                placeholder="Last Name"
+                value={formData.lastName}
+                onChange={(event) => handleInputChange('lastName', event.currentTarget.value)}
+                style={{ marginBottom: '12px' }}
+              />
+
+              {/* Date of Birth (wrapped with Popover) */}
+              <Text size="sm" color="white" style={{ marginBottom: '8px' }}>
+                Date of Birth
+              </Text>
+              <Popover
+                opened={popoverOpened}
+                onClose={() => setPopoverOpened(false)}
+                position="bottom"
+                withArrow
+                width={300}
+              >
+                <Popover.Target>
+                  <TextInput
+                    placeholder="Select your date of birth"
+                    value={formData.dateOfBirth.toDateString()}
+                    onFocus={() => setPopoverOpened(true)}
+                    style={{ marginBottom: '12px' }}
+                  />
+                </Popover.Target>
+                <Popover.Dropdown>
+                  <DatePicker
+                    value={formData.dateOfBirth}
+                    onChange={(date) => handleInputChange('dateOfBirth', date || new Date())}
+                  />
+                </Popover.Dropdown>
+              </Popover>
+
+              {/* Sex - improved layout */}
+              <Radio.Group
+                value={formData.sex}
+                onChange={(value) => handleInputChange('sex', value)}
+                mb="md" // Consistent margin below
+              >
+                <Flex justify="space-between" gap="lg"> {/* Align horizontally with gap between them */}
+                  <Radio value="male" label="Male" />
+                  <Radio value="female" label="Female" />
+                </Flex>
+              </Radio.Group>
+
+              {/* Occupation */}
+              <TextInput
+                placeholder="Occupation"
+                value={formData.occupation}
+                onChange={(event) => handleInputChange('occupation', event.currentTarget.value)}
+                style={{ marginBottom: '12px' }}
+              />
+
+              {/* Address */}
+              <TextInput
+                placeholder="Address"
+                value={formData.address}
+                onChange={(event) => handleInputChange('address', event.currentTarget.value)}
+                style={{ marginBottom: '12px' }}
+              />
+
+              {/* State */}
+              <TextInput
+                placeholder="State"
+                value={formData.state}
+                onChange={(event) => handleInputChange('state', event.currentTarget.value)}
+                style={{ marginBottom: '12px' }}
+              />
+
+              {/* Email Address */}
+              <TextInput
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={(event) => handleInputChange('email', event.currentTarget.value)}
+                style={{ marginBottom: '12px' }}
+              />
+
               {/* Navigation Buttons */}
               <Flex justify="space-between" mt="lg">
                 <Button
