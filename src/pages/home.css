@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One');
+@import url('https://fonts.googleapis.com/css?family=Cinzel');
+.bb {
+  font-family: 'Bowlby One';
+  font-size: 30px;
+  color: white;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+
+  
+/* Space below header, adjust for mobile */
+  text-align: center; /* Ensure text stays centered */
+  word-wrap: break-word;
+
+}
+
+
+.cc {
+    font-family: 'Bowlby One';
+    font-size: 35px;
+    color: white;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;
+  /* Space below header, adjust for mobile */
+    text-align: center; /* Ensure text stays centered */
+    word-wrap: break-word;
+  }
+  
+  .dd {
+    font-family: 'Cinzel';
+    font-size: 25px;
+    color: white;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;
+  /* Space below header, adjust for mobile */
+    text-align: center; /* Ensure text stays centered */
+    word-wrap: break-word;
+  }
+  
