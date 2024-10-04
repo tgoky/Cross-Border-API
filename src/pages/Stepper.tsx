@@ -214,7 +214,112 @@ export default function StepperForm() {
             </>
           )}
 
-          {/* Additional steps can be added similarly */}
+          {step === 3 && (
+            <>
+              <Text size="lg" mb="md" style={{ color: 'white' }}>
+                KYC Verification
+              </Text>
+              <Text size="sm" color="white" mb="md">
+                Please complete facial verification for KYC.
+              </Text>
+              {/* Facial Verification Placeholder */}
+              <Button
+                style={{
+                  backgroundColor: '#1a73e8',
+                  color: 'white',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  width: '100%',
+                  fontWeight: 600,
+                }}
+                onClick={nextStep} // Go to the next step after verification
+              >
+                Verify Face
+              </Button>
+              <Flex justify="space-between" mt="lg">
+                <Button
+                  onClick={previousStep}
+                  variant="outline"
+                  style={{
+                    borderRadius: '8px',
+                    padding: '10px 20px',
+                    width: '45%',
+                  }}
+                >
+                  Back
+                </Button>
+              </Flex>
+            </>
+          )}
+
+          {step === 4 && (
+            <>
+              <Text size="lg" mb="md" style={{ color: 'white' }}>
+                ID Verification
+              </Text>
+              <Text size="sm" color="white" mb="md">
+                Please upload your passport or ID for verification.
+              </Text>
+              {/* File Upload Placeholder */}
+              <TextInput
+                type="file"
+                placeholder="Upload Passport or ID"
+                style={{ marginBottom: '12px' }}
+              />
+
+              <Button
+                style={{
+                  backgroundColor: '#1a73e8',
+                  color: 'white',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  width: '100%',
+                  fontWeight: 600,
+                }}
+                onClick={nextStep} // Go to the next step after uploading
+              >
+                Upload ID
+              </Button>
+              <Flex justify="space-between" mt="lg">
+                <Button
+                  onClick={previousStep}
+                  variant="outline"
+                  style={{
+                    borderRadius: '8px',
+                    padding: '10px 20px',
+                    width: '45%',
+                  }}
+                >
+                  Back
+                </Button>
+              </Flex>
+            </>
+          )}
+
+          {step === 5 && (
+            <>
+              <Text size="lg" mb="md" style={{ color: 'white' }}>
+                Verification Complete
+              </Text>
+              <Text size="sm" color="white" mb="md">
+                Thank you for completing the KYC process. You can now proceed to the next steps.
+              </Text>
+
+              <Button
+                style={{
+                  backgroundColor: '#1a73e8',
+                  color: 'white',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  width: '100%',
+                  fontWeight: 600,
+                }}
+                onClick={() => alert('Redirecting to the main application...')} // Placeholder for the next action
+              >
+                Go to Dashboard
+              </Button>
+            </>
+          )}
         </Box>
       </Flex>
     </div>
