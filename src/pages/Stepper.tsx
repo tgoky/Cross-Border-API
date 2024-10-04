@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { Box, Button, TextInput, Text, Flex } from '@mantine/core';
+import { Box, Button, Text, Flex, TextInput } from '@mantine/core';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css'; // Import default styles for phone input
 
 export default function StepperForm() {
   const [step, setStep] = useState(1); // Track the current step
+  const [phoneNumber, setPhoneNumber] = useState(''); // Track the phone number input
 
   // Function to go to the next step
   const nextStep = () => {
@@ -37,14 +40,21 @@ export default function StepperForm() {
               <Text size="lg" mb="md" style={{ color: 'white' }}>
                 Enter your phone number to get started or login
               </Text>
-              <TextInput
-                placeholder="Phone number"
-                style={{
+
+              {/* Phone Input with Country Selector */}
+              <PhoneInput
+                country={'ng'} // Default country (Nigeria in this case)
+                value={phoneNumber} // Current phone number input
+                onChange={(phone) => setPhoneNumber(phone)} // Update phone number state on change
+                inputStyle={{
                   width: '100%',
                   borderRadius: '8px',
+                 paddingRight: '20px',
                   padding: '12px',
                   backgroundColor: 'white',
                 }}
+                buttonStyle={{ borderRadius: '8px' }} // Style for country select button
+                dropdownStyle={{ borderRadius: '8px' }} // Style for country dropdown
               />
               <Button
                 style={{
