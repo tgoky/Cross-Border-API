@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { Box, Button, Text, Flex, TextInput, Radio, Popover } from '@mantine/core';
-import { DatePicker } from '@mantine/dates'; // Import DatePicker
+import { DatePicker } from '@mantine/dates';
 import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css'; // Import default styles for phone input
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import 'react-phone-input-2/lib/style.css';
 
-export default function StepperForm() {
+interface StepperFormProps {
+  onComplete: () => void; // Prop to signal completion
+}
+
+export default function Stepper({ onComplete }: StepperFormProps) {
   const [step, setStep] = useState(1); // Track the current step
   const [phoneNumber, setPhoneNumber] = useState(''); // Track the phone number input
   const [formData, setFormData] = useState({
@@ -20,14 +25,25 @@ export default function StepperForm() {
 
   const [popoverOpened, setPopoverOpened] = useState(false); // Popover state for DatePicker
 
+  const navigate = useNavigate(); // Initialize the navigate function
+  
+
   // Function to go to the next step
   const nextStep = () => {
-    if (step < 5) setStep(step + 1);
+    if (step < 5) {
+      setStep(step + 1);
+    } else if (step === 5) {
+      // Call onComplete and navigate to Dashboard when reaching the last step
+      onComplete(); 
+      navigate('/dashboard'); // Change '/dashboard' to the actual route of your Dashboard component
+    }
   };
 
   // Function to go back to the previous step
   const previousStep = () => {
-    if (step > 1) setStep(step - 1);
+    if (step > 1) {
+      setStep(step - 1);
+    }
   };
 
   // Typing handleInputChange function to handle both string and Date types
@@ -67,8 +83,6 @@ export default function StepperForm() {
                 inputStyle={{
                   width: '100%',
                   borderRadius: '8px',
-                  paddingRight: '20px',
-                  padding: '12px',
                   backgroundColor: 'white',
                 }}
                 buttonStyle={{ borderRadius: '8px' }} // Style for country select button
@@ -245,83 +259,116 @@ export default function StepperForm() {
                     padding: '10px 20px',
                     width: '45%',
                   }}
-                >
-                  Back
-                </Button>
-              </Flex>
-            </>
-          )}
-
-          {step === 4 && (
-            <>
-              <Text size="lg" mb="md" style={{ color: 'white' }}>
-                ID Verification
-              </Text>
-              <Text size="sm" color="white" mb="md">
-                Please upload your passport or ID for verification.
-              </Text>
-              {/* File Upload Placeholder */}
-              <TextInput
-                type="file"
-                placeholder="Upload Passport or ID"
-                style={{ marginBottom: '12px' }}
-              />
-
-              <Button
-                style={{
-                  backgroundColor: '#1a73e8',
-                  color: 'white',
-                  borderRadius: '8px',
-                  padding: '12px 20px',
-                  width: '100%',
-                  fontWeight: 600,
-                }}
-                onClick={nextStep} // Go to the next step after uploading
-              >
-                Upload ID
-              </Button>
-              <Flex justify="space-between" mt="lg">
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={nextStep} // Proceed to the next step after verification
+                    style={{
+                      backgroundColor: '#1a73e8',
+                      color: 'white',
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      width: '45%',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </Flex>
+              </>
+            )}
+  
+            {step === 4 && (
+              <>
+                <Text size="lg" mb="md" style={{ color: 'white' }}>
+                  ID Verification
+                </Text>
+                <Text size="sm" color="white" mb="md">
+                  Please upload your ID or passport for verification.
+                </Text>
+                {/* ID Upload Placeholder */}
                 <Button
-                  onClick={previousStep}
-                  variant="outline"
                   style={{
+                    backgroundColor: '#1a73e8',
+                    color: 'white',
                     borderRadius: '8px',
-                    padding: '10px 20px',
-                    width: '45%',
+                    padding: '12px 20px',
+                    width: '100%',
+                    fontWeight: 600,
                   }}
+                  onClick={nextStep} // Go to the final step after upload
                 >
-                  Back
+                  Upload ID
                 </Button>
-              </Flex>
-            </>
-          )}
-
-          {step === 5 && (
-            <>
-              <Text size="lg" mb="md" style={{ color: 'white' }}>
-                Verification Complete
-              </Text>
-              <Text size="sm" color="white" mb="md">
-                Thank you for completing the KYC process. You can now proceed to the next steps.
-              </Text>
-
-              <Button
-                style={{
-                  backgroundColor: '#1a73e8',
-                  color: 'white',
-                  borderRadius: '8px',
-                  padding: '12px 20px',
-                  width: '100%',
-                  fontWeight: 600,
-                }}
-                onClick={() => alert('Redirecting to the main application...')} // Placeholder for the next action
-              >
-                Go to Dashboard
-              </Button>
-            </>
-          )}
-        </Box>
-      </Flex>
-    </div>
-  );
-}
+                <Flex justify="space-between" mt="lg">
+                  <Button
+                    onClick={previousStep}
+                    variant="outline"
+                    style={{
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      width: '45%',
+                    }}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={nextStep} // Proceed to completion after upload
+                    style={{
+                      backgroundColor: '#1a73e8',
+                      color: 'white',
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      width: '45%',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </Flex>
+              </>
+            )}
+  
+            {step === 5 && (
+              <>
+                <Text size="lg" mb="md" style={{ color: 'white' }}>
+                  KYC Complete
+                </Text>
+                <Text size="sm" color="white" mb="md">
+                  Your KYC verification is complete. Click below to proceed to your dashboard.
+                </Text>
+                <Button
+                  style={{
+                    backgroundColor: '#1a73e8',
+                    color: 'white',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    width: '100%',
+                    fontWeight: 600,
+                  }}
+                  onClick={nextStep} // Navigate to the dashboard
+                >
+                  Go to Dashboard
+                </Button>
+                <Flex justify="space-between" mt="lg">
+                  <Button
+                    onClick={previousStep}
+                    variant="outline"
+                    style={{
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      width: '45%',
+                    }}
+                  >
+                    Back
+                  </Button>
+                </Flex>
+              </>
+            )}
+          </Box>
+        </Flex>
+      </div>
+    );
+  }
+  

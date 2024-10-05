@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
 import Typical from 'react-typical';
 import Stepper from './Stepper'; // Import the Stepper component
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
 import './home.css';
 
 const countries = [
@@ -21,11 +22,22 @@ const countries = [
 export default function HomePage() {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [modalOpened, setModalOpened] = useState(false);
-  const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
+  const [hoveredCountry, setHoveredCountry] = useState<string | null>(null); // Set initial state for hoveredCountry
+  const navigate = useNavigate(); // Initialize useNavigate for routing
 
   const handleCountryChange = (country: { name: string; code: string; flag: string }) => {
     setSelectedCountry(country);
     setModalOpened(false); // Close modal after selecting country
+  };
+
+  const goToDashboard = () => {
+    navigate('/dashboard'); // Navigate to Dashboard
+  };
+
+  // Define the onComplete function to handle the completion of the stepper
+  const handleComplete = () => {
+    console.log('Stepper completed!');
+    goToDashboard(); // Optionally navigate to the dashboard on completion
   };
 
   return (
@@ -166,41 +178,50 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Render Stepper component */}
-      <Stepper />
+      {/* Render Stepper component and pass onComplete */}
+      <Stepper onComplete={handleComplete} />
 
-      {/* Modal for country selection */}
-      <Modal
-        opened={modalOpened}
-        onClose={() => setModalOpened(false)}
-        title="Select Location"
-        size="lg"
-        centered
+      {/* Button to navigate to Dashboard */}
+      <Button
+        onClick={goToDashboard} // Navigate to Dashboard on click
+        style={{
+          marginTop: '20px',
+          color: 'white',
+          backgroundColor: 'green',
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
       >
-        <Box mt="md">
-          {countries.map((country) => (
-            <Button
-              key={country.code}
-              onClick={() => handleCountryChange(country)}
-              onMouseEnter={() => setHoveredCountry(country.code)}
-              onMouseLeave={() => setHoveredCountry(null)}
-              style={{
-                display: 'block',
-                margin: '5px auto',
-                width: '100%',
-                borderRadius: '10px',
-                fontSize: '16px',
-                padding: '10px 15px',
-                backgroundColor: hoveredCountry === country.code ? '#1a73e8' : 'transparent',
-                color: hoveredCountry === country.code ? '#fff' : '#000',
-                transition: 'background-color 0.3s, color 0.3s',
-              }}
-            >
-              <span style={{ marginRight: 10 }}>{country.flag}</span>
-              {country.name}
-            </Button>
-          ))}
-        </Box>
+        Go to Dashboard
+      </Button>
+
+      {/* Country selection modal */}
+      <Modal opened={modalOpened} onClose={() => setModalOpened(false)} title="Select a Country">
+        {countries.map((country) => (
+          <Button
+            key={country.code}
+            onClick={() => handleCountryChange(country)}
+            onMouseEnter={() => setHoveredCountry(country.name)}
+            onMouseLeave={() => setHoveredCountry(null)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              margin: '5px 0',
+              backgroundColor: hoveredCountry === country.name ? 'rgba(255, 255, 255, 0.2)' : 'transparent', // Highlight on hover
+              color: 'white',
+              width: '100%',
+            }}
+          >
+            <Text>
+              {country.flag} {country.name}
+            </Text>
+            <Text size="sm" color="dimmed">
+              {country.code}
+            </Text>
+          </Button>
+        ))}
       </Modal>
     </div>
   );
