@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { Box, Text, Flex, Button, Tabs, Avatar, Group, ActionIcon, Menu, Modal, TextInput } from '@mantine/core';
+import {
+  Box,
+  Text,
+  Flex,
+  Button,
+  Tabs,
+  Avatar,
+  Group,
+  ActionIcon,
+  Menu,
+  Modal,
+  TextInput,
+} from '@mantine/core';
 import { IconSettings, IconCopy } from '@tabler/icons-react';
 import USDCABI from './USDC.json';
 
@@ -11,6 +23,7 @@ export default function Dashboard() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [privateKey, setPrivateKey] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const [modalOpen, setModalOpen] = useState(false);
   const [newWallet, setNewWallet] = useState<{ address: string; mnemonic?: string; privateKey: string } | null>(null);
 
@@ -20,11 +33,7 @@ export default function Dashboard() {
   // Fetch wallet balance
   const fetchWalletBalance = async (address: string) => {
     try {
-      console.log('Fetching balance for address:', address);
-      console.log('USDC Contract:', usdcContract); // Inspect the contract
-
       const balance = await usdcContract.balanceOf(address);
-      console.log("Raw balance:", balance.toString());
       const balanceFormatted = ethers.formatUnits(balance, 6);
       setWalletBalance(Number(balanceFormatted));
     } catch (error) {
@@ -32,7 +41,6 @@ export default function Dashboard() {
       setWalletBalance(null);
     }
   };
-
 
   // Import wallet
   const importWallet = async () => {
@@ -60,10 +68,37 @@ export default function Dashboard() {
     setModalOpen(true);
   };
 
+  // Copy wallet address
   const copyAddress = () => {
     if (walletAddress) {
       navigator.clipboard.writeText(walletAddress);
       alert("Address copied!");
+    }
+  };
+
+  // Register username and wallet address in MongoDB
+  const registerUser = async () => {
+    if (!username || !walletAddress) {
+      alert("Please enter a username and import/create a wallet.");
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, walletAddress }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error registering user:", error);
+      alert("Failed to register user.");
     }
   };
 
@@ -120,6 +155,18 @@ export default function Dashboard() {
           </Group>
         )}
 
+        {walletAddress && (
+          <Group justify="center" align="center" mb="20px">
+            <TextInput
+              placeholder="Enter Username"
+              value={username}
+              onChange={(event) => setUsername(event.currentTarget.value)}
+              style={{ width: 300, marginRight: 10 }}
+            />
+            <Button onClick={registerUser}>Register User</Button>
+          </Group>
+        )}
+
         <Tabs color="blue" defaultValue="deposit" variant="outline">
           <Tabs.List>
             <Tabs.Tab value="deposit">Deposit</Tabs.Tab>
@@ -155,15 +202,17 @@ export default function Dashboard() {
           <Text style={{ color: 'black' }}>
             Write down this private key carefully, it gives full access to your wallet.
           </Text>
-          <Text size="sm" mt="md" style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '8px' }}>
+          <Text size="sm" mt="md" style={{ backgroundColor: '#f0f0f0', padding: '10px' }}>
             Private Key: {newWallet.privateKey}
           </Text>
-          <Text size="sm" mt="md" style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '8px' }}>
-            Mnemonic (Optional): {newWallet.mnemonic || "N/A"}
+          <Text size="sm" mt="md">
+            Wallet Address: {newWallet.address}
           </Text>
-          <Button onClick={() => setModalOpen(false)} mt="md">
-            I have saved it
-          </Button>
+          {newWallet.mnemonic && (
+            <Text size="sm" mt="md">
+              Mnemonic: {newWallet.mnemonic}
+            </Text>
+          )}
         </Modal>
       )}
     </div>
