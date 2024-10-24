@@ -84,11 +84,18 @@ export default function Dashboard() {
     }
 
     try {
-      const response = await fetch('/api/users/register', {
+      // Log the input data for debugging
+      console.log("Sending data:", { username, walletAddress });
+
+      const response = await fetch('http://localhost:5001/api/users/register', { // Update with your actual backend URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, walletAddress }),
       });
+
+      // Log the raw response for debugging
+      console.log('Response status:', response.status);
+      console.log('Response data:', await response.text());
 
       const data = await response.json();
       if (response.ok) {
